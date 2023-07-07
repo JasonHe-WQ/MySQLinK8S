@@ -19,6 +19,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: mysql-pv-claim
+        - name: init-shell
+          configMap:
+              name: mysql-init-script
       containers:
         - name: mysql
           image: mysql
