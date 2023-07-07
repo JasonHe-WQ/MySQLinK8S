@@ -26,8 +26,6 @@ spec:
         - name: mysql
           image: mysql
           imagePullPolicy: IfNotPresent
-          securityContext:
-            runAsUser: 0
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: data
@@ -51,4 +49,8 @@ spec:
             - --default-authentication-plugin=mysql_native_password
             - --character-set-server=utf8mb4
             - --collation-server=utf8mb4_unicode_ci
+          lifecycle:
+            postStart:
+              exec:
+                command: [ "/bin/sh", "-c", "chown -R mysql:mysql /var/lib/mysql" ]
 
