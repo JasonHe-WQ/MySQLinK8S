@@ -52,5 +52,4 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: [ "/bin/sh", "-c", "chown -R mysql:mysql /var/lib/mysql" ]
-
+                command: [ "/bin/sh", "-c", "chown -R mysql:mysql /var/lib/mysql"]
