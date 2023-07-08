@@ -1,3 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: juicefs
+---
 kind: PersistentVolume
 apiVersion: v1
 metadata:
@@ -6,9 +11,9 @@ metadata:
     type: local
   namespace: juicefs
 spec:
-  storageClassName: standard
   capacity:
     storage: 10Gi
+  volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
   hostPath:
@@ -20,9 +25,11 @@ metadata:
   name: mysql-pv-claim
   namespace: juicefs
 spec:
-  storageClassName: standard
   accessModes:
     - ReadWriteOnce
+  selector:
+    matchLabels:
+      type: local
   resources:
     requests:
       storage: 10Gi

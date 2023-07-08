@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: juicefs
+  name: mysql8-config
+data:
+  my.cnf: |
+    [mysql]
+    # mysql客户端默认字符集
+    default-character-set=utf8
+    [mysqld]
+    # 数据库文件位置
+    datadir=/var/lib/mysql
+    # 允许最大连接数
+    max_connections=1000
+    # innodb的dml操作的行级锁的等待时间
+    innodb_lock_wait_timeout=500
+    # 设置mysql服务端默认字符集
+    character-set-server=utf8mb4
+    # 默认创建新数据的新建排序规则
+    collation-server=utf8mb4_general_ci
+    # 创建新表时将使用的默认存储引擎
+    default-storage-engine=INNODB
+    # 缓存大小
+    sort_buffer_size=512MB
+    # 大小写敏感配置项0为敏感，1为不敏感
+    lower_case_table_names=1
+    # 选择正8区
+    default-time-zone='+8:00'
