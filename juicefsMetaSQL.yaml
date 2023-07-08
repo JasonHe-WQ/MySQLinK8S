@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mysql
   namespace: juicefs
@@ -10,18 +10,19 @@ spec:
   selector:
     matchLabels:
       app: juicefsmeta
+  serviceName: "juicefsmeta"
   template:
     metadata:
       labels:
         app: juicefsmeta
     spec:
       volumes:
-        - name: data
-          persistentVolumeClaim:
-              claimName: mysql-pv-claim
         - name: mysql8-config
           configMap:
               name: mysql8-config
+        - name: data
+          hostPath:
+            path: /mnt/data
       containers:
         - name: mysql
           image: mysql
@@ -49,3 +50,34 @@ spec:
               value: "%"
             - name: MYSQL_DATABASE
               value: juicefs
+
+
+          livenessProbe:
+            initialDelaySeconds: 30        # 初始化延迟时间
+            periodSeconds: 10              # 探测周期间隔时间
+            timeoutSeconds: 5              # 单次探测超时时间
+            successThreshold: 1            # 探测失败到成功的重试次数
+            failureThreshold: 3            # 探测成功到失败的重试次数
+            exec:
+              # 在容器中执行此命令，如果命令返回状态码为0，则认为探测成功
+              command: [ "mysqladmin", "-uroot", "-p${MYSQL_ROOT_PASSWORD}", "ping" ]
+
+          readinessProbe:
+            initialDelaySeconds: 10        # 初始化延迟时间
+            periodSeconds: 10              # 探测周期间隔时间
+            timeoutSeconds: 5              # 单次探测超时时间
+            successThreshold: 1            # 探测失败到成功的重试次数
+            failureThreshold: 3            # 探测成功到失败的重试次数
+            exec:
+              # 在容器中执行此命令，如果命令返回状态码为0，则认为探测成功
+              command: [ "mysqladmin", "-uroot", "-p${MYSQL_ROOT_PASSWORD}", "ping" ]
+
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: data
+#      spec:
+#        accessModes: [ "ReadWriteOnce" ]
+#        storageClassName: "local-storage"
+#        resources:
+#          requests:
+#            storage: 10Gi

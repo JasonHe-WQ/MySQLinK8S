@@ -1,35 +1,40 @@
-apiVersion: v1
-kind: Namespace
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
 metadata:
-  name: juicefs
+  name: local-storage
+provisioner: kubernetes.io/no-provisioner  #动态部署这里需要改
+volumeBindingMode: WaitForFirstConsumer
 ---
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: mysql-pv
-  labels:
-    type: local
-  namespace: juicefs
-spec:
-  capacity:
-    storage: 10Gi
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data"
+# 静态部署时使用，动态部署不需要
+#kind: PersistentVolume
+#apiVersion: v1
+#metadata:
+#  name: mysql-pv
+#  labels:
+#    type: local
+#  namespace: juicefs
+#spec:
+#  capacity:
+#    storage: 10Gi
+#  volumeMode: Filesystem
+#  accessModes:
+#    - ReadWriteOnce
+#  hostPath:
+#    path: "/mnt/data"
 ---
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: mysql-pv-claim
-  namespace: juicefs
-spec:
-  accessModes:
-    - ReadWriteOnce
-  selector:
-    matchLabels:
-      type: local
-  resources:
-    requests:
-      storage: 10Gi
+# 静态部署时使用，动态部署不需要
+#kind: PersistentVolumeClaim
+#apiVersion: v1
+#metadata:
+#  name: mysql-pv-claim
+#  namespace: juicefs
+#spec:
+#  accessModes:
+#    - ReadWriteOnce
+#
+#  selector:
+#    matchLabels:
+#      type: local
+#  resources:
+#    requests:
+#      storage: 10Gi
